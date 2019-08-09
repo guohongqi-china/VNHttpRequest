@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
 
 
   s.source       = { :git => "https://github.com/guohongqi-china/VNHttpRequest.git", :tag => s.version.to_s }
-  #s.public_header_files = "VNHttpRequest/VNHttpRequest.h"
+  s.public_header_files = "VNHttpRequest/VNHttpRequest.h"
   s.source_files  = "VNHttpRequest/*.{h,m}"
 
 
