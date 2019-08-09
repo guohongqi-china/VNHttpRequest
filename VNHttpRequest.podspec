@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
 
 
   s.name         = "VNHttpRequest"
-  s.version      = "0.0.5"
+  s.version      = "0.0.6"
   s.summary      = "AFNetworking fsdoa"
 
   s.description  = <<-DESC
@@ -42,8 +42,8 @@ EOS
   s.ios.deployment_target = '8.0'
 
   s.subspec 'FrameWork' do |ss|
-    ss.source_files = 'FrameWork/**/*.{h,m}'
-    ss.public_header_files = 'FrameWork/**/*.{h}'
+    ss.source_files = 'VNHttpRequest/FrameWork/**/*.{h,m}'
+    ss.public_header_files = 'VNHttpRequest/FrameWork/**/*.{h}'
     ss.watchos.frameworks = 'MobileCoreServices', 'CoreGraphics'
     ss.ios.frameworks = 'MobileCoreServices', 'CoreGraphics'
     ss.osx.frameworks = 'CoreServices'
