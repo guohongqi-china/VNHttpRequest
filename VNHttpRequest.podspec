@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
 
 
   s.name         = "VNHttpRequest"
-  s.version      = "0.0.6"
+  s.version      = "0.0.7"
   s.summary      = "AFNetworking fsdoa"
 
   s.description  = <<-DESC
@@ -25,8 +25,8 @@ Pod::Spec.new do |s|
 
 
   s.source       = { :git => "https://github.com/guohongqi-china/VNHttpRequest.git", :tag => s.version.to_s }
-  s.public_header_files = "VNHttpRequest/**/*.{h}"
-  s.source_files  = "VNHttpRequest/**/*.{h,m}"
+  s.public_header_files = "VNHttpRequest/VNHttpRequest.h"
+  s.source_files  = "VNHttpRequest/VNHttpRequest.h"
 
 
   s.dependency "AFNetworking", "~> 3.0"
