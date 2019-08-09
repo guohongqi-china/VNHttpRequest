@@ -32,6 +32,22 @@ Pod::Spec.new do |s|
   s.dependency "AFNetworking", "~> 3.0"
   s.requires_arc = true
 
+  pch_AF = <<-EOS
+#ifndef TARGET_OS_IOS
+  #define TARGET_OS_IOS TARGET_OS_IPHONE
+#endif
+
+EOS
+  s.prefix_header_contents = pch_AF
+  s.ios.deployment_target = '8.0'
+
+  s.subspec 'FrameWork' do |ss|
+    ss.source_files = 'FrameWork/**/*.{h,m}'
+    ss.public_header_files = 'FrameWork/**/*.{h}'
+    ss.watchos.frameworks = 'MobileCoreServices', 'CoreGraphics'
+    ss.ios.frameworks = 'MobileCoreServices', 'CoreGraphics'
+    ss.osx.frameworks = 'CoreServices'
+  end
 
   # spec.resource  = "icon.png"
   # spec.resources = "Resources/*.png"
