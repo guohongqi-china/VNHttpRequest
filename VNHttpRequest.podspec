@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
 
   s.name         = "VNHttpRequest"
   s.version      = "0.0.1"
-  s.summary      = "AFNetworking 二次封装，对于请求和响应序列化进一步解析，成功及失败日志序列化"
+  s.summary      = "AFNetworking fsdoa"
 
   s.description  = <<-DESC
   Net request ,call back data Serialization to CH
@@ -24,9 +24,9 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
 
 
-  s.source       = { :git => "https://github.com/guohongqi-china/VNHttpRequest.git", :tag => s.version }
-  s.public_header_files = "VNHttpRequest/VNHttpRequest.h"
-  s.source_files  = "VNHttpRequest/**/*.{h,m}"
+  s.source       = { :git => "https://github.com/guohongqi-china/VNHttpRequest.git", :tag => s.version.to_s }
+  #s.public_header_files = "VNHttpRequest/VNHttpRequest.h"
+  s.source_files  = "VNHttpRequest/*.{h,m}"
 
 
   s.dependency "AFNetworking", "~> 3.0"
