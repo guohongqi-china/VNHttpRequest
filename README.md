@@ -17,3 +17,57 @@ Installation
 1. Add `pod 'VNHttpRequest'` to your Podfile.
 2. Run `pod install` or `pod update`.
 3. Import \<VNHttpRequest/VNHttpRequest.h\>.
+
+
+Use Case
+==============
+
+#### Creating an Request get
+```
+[VNHttpRequestManager sendJSONRequestWithMethod:RequestMethod_Get pathUrl:@"https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles" params:nil complement:^(ServerResponseInfo *serverInfo) {
+if (serverInfo.isSuccess) {
+self.itemArr = [serverInfo.response mutableCopy];
+}
+}];
+```
+#### Creating an Request post
+```
+[VNHttpRequestManager sendJSONRequestWithMethod:RequestMethod_Post pathUrl:@"https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles/" params:@{@"locale":@"en-us"} complement:^(ServerResponseInfo *serverInfo) {
+if (serverInfo.isSuccess) {
+
+}
+}];
+```
+#### Creating an form-data  提参方式
+
+```
+[VNHttpRequestManager sendFORMRequestWithMethod:RequestMethod_Post pathUrl:@"https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles/" params:@{@"key":@"value"} complement:^(ServerResponseInfo * _Nullable serverInfo) {
+
+}];
+```
+#### Creating an upload data
+```
+[VNHttpRequestManager uploadFileWithPath:@"https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles/28277c34-9512-4b89-97af-3a3683172287/enroll?shortAudio=true" filePath:@[@"/Users/用户/Desktop/xxxx.wav"] parms:nil fileType:FileType_Video result:^(ServerResponseInfo *serverInfo) {
+if (serverInfo.isSuccess) {
+[self.itemArr removeObjectAtIndex:0];
+}
+}];
+```
+#### Creating an download
+```
+downTask =  [VNHttpRequestManager downLoadRequest:@"http://dldir1.qq.com/qqfile/QQforMac/QQ_V5.4.0.dmg"  filePath:nil downProgress:^(double progress) {
+[[NSOperationQueue mainQueue] addOperationWithBlock:^{
+NSLog(@"%f",progress);
+}];
+} complement:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+
+}];
+
+# 开始/恢复下载
+[VNHttpRequestManager startResume:downTask];
+# 暂停下载
+[VNHttpRequestManager suspend:downTask];
+
+```
+
+

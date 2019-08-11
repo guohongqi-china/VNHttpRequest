@@ -65,6 +65,10 @@
             
         }
     }];
+    
+    [VNHttpRequestManager sendFORMRequestWithMethod:RequestMethod_Post pathUrl:@"https://westus.api.cognitive.microsoft.com/spid/v1.0/identificationProfiles/" params:@{@"key":@"value"} complement:^(ServerResponseInfo * _Nullable serverInfo) {
+        
+    }];
 }
 
 #pragma mark --  json提参方式，delete请求
