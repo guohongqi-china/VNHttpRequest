@@ -6,7 +6,14 @@
 //  Copyright © 2018年 guohq. All rights reserved.
 //
 
-
+#ifndef dispatch_main_async_safe
+#define dispatch_main_async_safe(block)\
+if (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(dispatch_get_main_queue())) {\
+block();\
+} else {\
+dispatch_async(dispatch_get_main_queue(), block);\
+}
+#endif
 
 #import "VNHttpRequestManager.h"
 #import "AFNetworking.h"
@@ -55,6 +62,7 @@ static AFHttpClientManager *client = nil;
     
     return client;
 }
+
 
 // 不同请求头部设置
 + (void)requestSerializerSetting:(AFHTTPRequestSerializer *)requestSerializer{
@@ -120,16 +128,12 @@ static AFHttpClientManager *client = nil;
     // json格式 请求参数
     client.requestSerializer = [AFJSONRequestSerializer serializer];
     [client.requestSerializer setValue:@"application/json;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    // 请求头设置
+    [AFHttpClientManager  requestSerializerSetting:client.requestSerializer];
     
-    typeof(client) weakClient = client;
-    VNRequestOperation<VNOperationAdapter> *requestOperation = [[VNRequestOperation alloc]initOperationWithTask:^{
-        // 请求头设置
-        [AFHttpClientManager  requestSerializerSetting:weakClient.requestSerializer];
-        
-        [VNHttpRequestManager requestWidth:requestMethod requestManager:weakClient pathUrl:pathUrl params:params requestCount:0 complement:result];
-    }];
+    [VNHttpRequestManager requestWidth:requestMethod requestManager:client pathUrl:pathUrl params:params requestCount:0 complement:result];
     
-    [client.requestQueue addOperation:requestOperation];
+    
 }
 
 //JSON 参数加密类型
@@ -183,12 +187,9 @@ static AFHttpClientManager *client = nil;
     client.requestSerializer = [AFHTTPRequestSerializer serializer];
     [client.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     // 请求头设置
-    typeof(client) weakClient = client;
-    VNRequestOperation<VNOperationAdapter> *requestOperation = [[VNRequestOperation alloc]initOperationWithTask:^{
-        [AFHttpClientManager  requestSerializerSetting:weakClient.requestSerializer];
-        [VNHttpRequestManager requestWidth:requestMethod requestManager:weakClient pathUrl:pathUrl params:params requestCount:0 complement:result];
-    }];
-    [client.requestQueue addOperation:requestOperation];
+    [AFHttpClientManager  requestSerializerSetting:client.requestSerializer];
+    [VNHttpRequestManager requestWidth:requestMethod requestManager:client pathUrl:pathUrl params:params requestCount:0 complement:result];
+    
 }
 
 //上传文件
@@ -271,7 +272,7 @@ static AFHttpClientManager *client = nil;
 }
 
 + (void)deleteHeaderSeting:(BOOL)result{
-//    setedDelete = result;
+    //    setedDelete = result;
 }
 
 #pragma mark------------------------------------  私有方法   --------------------------------------------------
@@ -298,9 +299,9 @@ static AFHttpClientManager *client = nil;
                                             [VNHttpRequestManager requestWidth:method requestManager:manager pathUrl:pathUrl params:params requestCount:count complement:result];
                                             
                                         }else{
-                                            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                            dispatch_main_async_safe(^{
                                                 result(serverInfo);
-                                            }];
+                                            })
                                         }
                                         
                                     }];
@@ -338,8 +339,10 @@ static AFHttpClientManager *client = nil;
         NSLog(@"URL Value=%@",serverUrl);
         NSLog(@"Parms Value=%@",params);
 #endif
-        [VNHttpRequestManager handleSuccessTask:task responseObject:responseObject complement:result];
-        
+        VNRequestOperation<VNOperationAdapter> *requestOperation = [[VNRequestOperation alloc]initOperationWithTask:^{
+            [VNHttpRequestManager handleSuccessTask:task responseObject:responseObject complement:result];
+        }];
+        [manager.requestQueue addOperation:requestOperation];
     };
     
     void (^failureBlock)(NSURLSessionDataTask *,NSError *) =^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -348,8 +351,10 @@ static AFHttpClientManager *client = nil;
         NSLog(@"URL Value=%@",serverUrl);
         NSLog(@"Parms Value=%@",params);
 #endif
-        [VNHttpRequestManager handleFailTask:task error:error complement:result];
-        
+        VNRequestOperation<VNOperationAdapter> *requestOperation = [[VNRequestOperation alloc]initOperationWithTask:^{
+            [VNHttpRequestManager handleFailTask:task error:error complement:result];
+        }];
+        [manager.requestQueue addOperation:requestOperation];
         
     };
     
