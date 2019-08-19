@@ -56,7 +56,7 @@ static AFHttpClientManager *client = nil;
         client.requestQueue.maxConcurrentOperationCount    =  6;
         
         //response data type
-        client.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/html", @"text/javascript",@"text/plain",@"image/gif", nil];
+        client.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/html", @"text/javascript",@"text/plain",@"image/gif",@"image/jpeg", nil];
         
     });
     
@@ -186,6 +186,7 @@ static AFHttpClientManager *client = nil;
     // formData格式 请求参数
     client.requestSerializer = [AFHTTPRequestSerializer serializer];
     [client.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    
     // 请求头设置
     [AFHttpClientManager  requestSerializerSetting:client.requestSerializer];
     [VNHttpRequestManager requestWidth:requestMethod requestManager:client pathUrl:pathUrl params:params requestCount:0 complement:result];
@@ -545,7 +546,9 @@ static AFHttpClientManager *client = nil;
 
 // unicode 编码汉化
 +(NSString *)replaceUnicode:(NSString*)unicodeStr{
-    
+    if (unicodeStr.length == 0) {
+        return @"";
+    }
     NSString *tempStr1=[unicodeStr stringByReplacingOccurrencesOfString:@"\\u"withString:@"\\U"];
     NSString *tempStr2=[tempStr1 stringByReplacingOccurrencesOfString:@"\""withString:@"\\\""];
     NSString *tempStr3=[[@"\""stringByAppendingString:tempStr2]stringByAppendingString:@"\""];
@@ -584,10 +587,11 @@ static AFHttpClientManager *client = nil;
             
 #ifdef DEBUG
             NSLog(@"数据解析错误 -JSONValue failed. Error trace is: %@,\n JSON:%@", error,strJSON);
+            NSLog(@"Response Value = %@",data );
 #endif
             
-            if (!jsonObject) {
-                complement(error,nil);
+            if (!jsonObject || [jsonObject length] == 0) {
+                complement(nil,data);
                 return;
             }
             
