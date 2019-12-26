@@ -241,10 +241,13 @@ static AFHttpClientManager *client = nil;
         
     } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
         if (filePath) {
+            NSLog(@"文件下载路径:%@",filePath);
             return [NSURL fileURLWithPath:filePath];;
         }
         NSString *cachesPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
-        NSString *path = [cachesPath stringByAppendingPathComponent:response.suggestedFilename];
+        NSString *fileName = [NSString stringWithFormat:@"%@%ld", [[NSUUID UUID] UUIDString], (long)[[NSDate date] timeIntervalSince1970]];
+        NSString *path = [cachesPath stringByAppendingPathComponent:[fileName stringByAppendingFormat:@"%@",response.suggestedFilename]];
+        NSLog(@"文件下载路径:%@",path);
         return [NSURL fileURLWithPath:path];
     } completionHandler:complement];
     
@@ -596,7 +599,11 @@ static AFHttpClientManager *client = nil;
             }
             
         }
+    }else{
+        complement(nil,@"");
+        return;
     }
+    
     NSData *jsonData      = [NSJSONSerialization dataWithJSONObject:jsonObject
                                                             options:NSJSONWritingPrettyPrinted
                                                               error:nil];
